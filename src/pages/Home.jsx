@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import Card from '../components/Cards.jsx';
-import { fetchPreview } from '../api.js'
+import { useParams, Link } from 'react-router-dom';
+import Card from '../components/Card'; // Ensure this path is correct
+import { fetchPreview } from '../api'; // Ensure this path is correct
+import '../App.css';
 
-export default function Home() {
+function Home() {
+    const { id } = useParams();
+    const selectedGenre = id ? parseInt(id) : null;
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -10,32 +15,44 @@ export default function Home() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const previewData = await fetchPreview(); // Fetch data from API
-                setData(previewData); // Update state with fetched data
-                setLoading(false); // Update loading state
+                const previewData = await fetchPreview();
+                setData(previewData);
+                setLoading(false);
             } catch (error) {
-                setError(error.message); // Handle fetch error
-                setLoading(false); // Update loading state
+                setError(error.message);
+                setLoading(false);
             }
         };
 
-        fetchData(); // Call fetchData function on component mount
+        fetchData();
     }, []);
 
-    if (loading) return <div>Loading...</div>; // Render loading indicator if data is still loading
-    if (error) return <div>Error: {error}</div>
+    const filterByGenre = (items, genreId) => {
+        if (!genreId) return items;
+        return items.filter(item => item.genres.includes(genreId));
+    };
+
+    const filteredData = filterByGenre(data, selectedGenre);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
     return (
         <section className="cards-list">
-            {data.map(item => (
+            {filteredData.map(item => (
                 <Card
                     key={item.id}
                     title={item.title}
                     description={item.description}
-                    genres={item.genres} // Assuming genres is an array of genre IDs
-                    image={item.image} // Image URL from API data
-                    url={item.url} // Assuming url is the URL for the card link
+                    genres={item.genres}
+                    image={item.image}
+                    url={item.url}
+                    seasons={item.seasons}
+                    updated={item.updated}
                 />
             ))}
         </section>
-    )
+    );
 }
+
+export default Home;

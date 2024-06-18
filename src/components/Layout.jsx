@@ -1,15 +1,19 @@
-import { Outlet } from "react-router-dom"
-import Header from './Header'
+import React from 'react';
+import Header from './Header';
 import Footer from './Footer'
+import Home from '../pages/Home';
 
-export default function Layout() {
+
+const Layout = ({ children, onGenreSelect, genresData }) => {
     return (
-        <div>
-            <Header />
-            <main>
-                <Outlet />
-            </main>
+        <main>
+            <Header onGenreSelect={onGenreSelect} genresData={genresData} />
+            <Home>
+                {children}
+            </Home>
             <Footer />
-        </div>
-    )
+        </main>
+    );
 }
+
+export default Layout;
