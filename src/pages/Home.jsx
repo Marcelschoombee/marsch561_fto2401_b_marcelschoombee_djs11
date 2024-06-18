@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import Card from '../components/Card'; // Ensure this path is correct
+import { useParams } from 'react-router-dom';
+import Card from '../components/Cards'; // Ensure this path is correct
 import { fetchPreview } from '../api'; // Ensure this path is correct
 import '../App.css';
 
@@ -33,6 +33,8 @@ function Home() {
     };
 
     const filteredData = filterByGenre(data, selectedGenre);
+
+    filteredData.sort((a, b) => a.title.localeCompare(b.title)); // filteredData alphabetically by title
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
