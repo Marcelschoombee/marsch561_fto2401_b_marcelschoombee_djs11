@@ -11,6 +11,8 @@ function Home() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
+    
 
     // Modal state
     const [selectedShow, setSelectedShow] = useState(null);
@@ -18,7 +20,7 @@ function Home() {
     const [currentSeasonIndex, setCurrentSeasonIndex] = useState(0); // State to track current season index
     const [currentEpisode, setCurrentEpisode] = useState(null); // State to track current episode
     const [favorites, setFavorites] = useState([]); // State to track favorite episodes
-    
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -51,14 +53,21 @@ function Home() {
     const filteredData = filterByGenre(data, selectedGenre);
 
     // Sort the filteredData alphabetically by title
-    filteredData.sort((a, b) => a.title.localeCompare(b.title));
+    filteredData.sort((a, b) => {
+        const titleA = a.title.toUpperCase(); // ignore upper and lowercase
+        const titleB = b.title.toUpperCase(); // ignore upper and lowercase
+        if (sortOrder === 'asc') {
+            return titleA.localeCompare(titleB);
+        } else {
+            return titleB.localeCompare(titleA);
+        }
+    });
 
     // Function to get genre title by ID
     const getGenreTitle = (genreId) => {
         const genre = genresData.find(genre => genre.id === genreId);
         return genre ? genre.title : 'Unknown Genre';
     };
-
 
     // Function to open modal and fetch show details
     const openModal = async (showId) => {
@@ -107,18 +116,27 @@ function Home() {
         return favorites.includes(`${selectedShow.id}-${currentSeasonIndex}-${episode.episode}`);
     };
 
+    // Function to handle sorting based on user selection
+    const handleSortOrder = (order) => {
+        setSortOrder(order);
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
         <section className="cards-list">
+            <div className="sort-options">
+                <button className={`btn ${sortOrder === 'asc' ? 'active' : ''}`} onClick={() => handleSortOrder('asc')}>A-Z</button>
+                <button className={`btn ${sortOrder === 'desc' ? 'active' : ''}`} onClick={() => handleSortOrder('desc')}>Z-A</button>
+            </div>
             {filteredData.map(item => (
                 <div key={item.id} className="card">
                     <div className="card-image">
                         <img src={item.image} alt={item.title} />
                     </div>
                     <div className="card-content">
-                        <h2>{item.title}</h2>    
+                        <h2>{item.title}</h2>
                         <p><strong>Genre:</strong> {getGenreTitle(item.genres[0])}</p>
                         <p><strong>Seasons:</strong> {item.seasons}</p>
                         <p><strong>Updated:</strong> {new Date(item.updated).toLocaleDateString()}</p>
@@ -127,27 +145,28 @@ function Home() {
                 </div>
             ))}
             {modalOpen && selectedShow && (
-    <div className="modal">
-        <div className="modal-content">
-            <span className="close" onClick={closeModal}>&times;</span> 
-            <img 
-                src={selectedShow.seasons[currentSeasonIndex].image} 
-                alt={selectedShow.title} 
-                className="modal-image" 
-            />
-            <h2>{selectedShow.title}</h2>
-            <p>{selectedShow.description}</p> 
-            <div className="season-nav">
-                {selectedShow.seasons.map((season, index) => (
-                    <button
-                        key={index}
-                        className={`season-button ${index === currentSeasonIndex ? 'active' : ''}`}
-                        onClick={() => setCurrentSeasonIndex(index)}
-                    >
-                        Season {season.season}
-                    </button>
-                ))}
-            </div>{currentEpisode && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={closeModal}>&times;</span>
+                        <img
+                            src={selectedShow.seasons[currentSeasonIndex].image}
+                            alt={selectedShow.title}
+                            className="modal-image"
+                        />
+                        <h2>{selectedShow.title}</h2>
+                        <p>{selectedShow.description}</p>
+                        <div className="season-nav">
+                            {selectedShow.seasons.map((season, index) => (
+                                <button
+                                    key={index}
+                                    className={`season-button ${index === currentSeasonIndex ? 'active' : ''}`}
+                                    onClick={() => setCurrentSeasonIndex(index)}
+                                >
+                                    Season {season.season}
+                                </button>
+                            ))}
+                        </div>
+                        {currentEpisode && (
                             <div className="audio-player">
                                 <h4>Now Playing: {currentEpisode.title}</h4>
                                 <audio controls src={currentEpisode.file}>
@@ -155,14 +174,14 @@ function Home() {
                                 </audio>
                             </div>
                         )}
-            <h3>{selectedShow.seasons[currentSeasonIndex].title}</h3>
-            <ul className="episode-list">
+                        <h3>{selectedShow.seasons[currentSeasonIndex].title}</h3>
+                        <ul className="episode-list">
                             {selectedShow.seasons[currentSeasonIndex].episodes.map(episode => (
                                 <li key={episode.episode} onClick={() => handleEpisodeClick(episode)}>
                                     <strong>{episode.title}</strong>
                                     <p>{episode.description}</p>
-                                    <button 
-                                        className={`favorite-btn ${isFavorite(episode) ? 'favorited' : ''}`} 
+                                    <button
+                                        className={`favorite-btn ${isFavorite(episode) ? 'favorited' : ''}`}
                                         onClick={() => toggleFavorite(episode)}
                                     >
                                         {isFavorite(episode) ? 'Unfavorite' : 'Favorite'}
@@ -170,7 +189,7 @@ function Home() {
                                 </li>
                             ))}
                         </ul>
-                        
+
                         <div className="season-navigation">
                             {currentSeasonIndex > 0 && (
                                 <button onClick={prevSeason}>Previous Season</button>
