@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import genresData from '../genre'; // Adjust the path based on your project structure
+import genresData from '../genresData';
 import '../index.css';
 
 function Header() {
@@ -19,6 +19,7 @@ function Header() {
                         ))}
                     </div>
                 </div>
+                <Link to="/favorites" className="dropbtn">Favorites</Link>
             </nav>
         </div>
     );

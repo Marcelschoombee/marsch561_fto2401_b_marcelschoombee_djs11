@@ -7,243 +7,115 @@ body {
 }
 
 .cards-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
+  justify-content: center; /* Center align cards */
+  padding: 20px; /* Add padding to center content and provide spacing */
 }
 
 .card {
-  width: 300px; 
-  height: 500px; 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.card:hover {
-  transform: scale(1.05);
+  transition: transform 0.3s ease;
+  width: 300px; /* Initial width for desktop */
+  max-width: 100%; /* Ensure cards don't exceed the screen width */
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-.card--image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.card-image img {
+  max-width: 300px;
+  max-height: auto;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .card-content {
-  padding: 15px;
-  flex-grow: 1;
+  padding: 20px;
 }
 
-.card-title {
-  font-size: 1.5em;
-  margin: 0;
-  color: #333; /* Dark grey color */
-}
-
-.card-description {
-  margin-bottom: 10px;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /* For multiline truncation with ellipsis */
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Number of lines to show before truncating */
-  -webkit-box-orient: vertical;
-}
-
-.card-genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.card-genres span {
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  padding: 5px 10px;
-  font-size: 0.875em;
-  color: #555;
-}
-
-.card-seasons, .card-updated {
-  font-size: 1em;
-  margin: 10px 0;
-  color: #555;
-}
-
-.card-link {
-  display: block;
-  text-align: center;
-  padding: 10px 0;
+.btn {
   background-color: #007bff;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 0 0 10px 10px;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.card-link:hover {
-  background-color: #0056b3;
-}
-
-.card-seasons,
-.card-updated {
-    font-size: 0.9em;
-    margin-bottom: 5px;
-}
-
-.card-read-more,
-.read-more {
-    color: #007bff;
-    cursor: pointer;
-}
-
-.card-read-more:hover,
-.read-more:hover {
-    text-decoration: underline;
-    color: #0056b3; 
-}
-
-.loading, .error {
-  text-align: center;
-  padding: 20px;
-  font-size: 1.2em;
-  color: #333;
-}
-
-.footer {
-  background-color: #333;
-  color: #fff;
-  padding: 20px 0;
-  text-align: center;
-  position: relative;
-  bottom: 0;
-  width: 100%;
-  font-family: 'Arial', sans-serif;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.footer a {
-  color: #fff;
-  text-decoration: none;
-  margin: 0 10px;
-  transition: color 0.3s ease;
-}
-
-.footer a:hover {
-  color: #ccc;
-}
-
-.footer p {
-  margin: 5px 0;
-}
-
-/* Modal Styles */
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  max-width: 600px;
-  max-height: 600px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  z-index: 1000;
-  overflow: auto;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 999;
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
   border: none;
-  font-size: 24px;
+  color: #ffffff;
   cursor: pointer;
-}
-
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.modal-image {
-  width: 100%;
-  border-radius: 8px;
-}
-
-.modal-title {
-  margin: 20px 0;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.modal-description {
   font-size: 16px;
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-
-.modal-genres,
-.modal-seasons,
-.modal-episodes {
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.modal-genres strong,
-.modal-seasons strong,
-.modal-episodes strong {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.modal-seasons button {
-  margin-right: 10px;
-  padding: 8px 12px;
-  border: none;
-  background-color: #007bff;
-  color: #fff;
-  border-radius: 4px;
-  cursor: pointer;
+  padding: 10px 20px;
   transition: background-color 0.3s ease;
 }
 
-.modal-seasons button:hover {
+.btn:hover {
   background-color: #0056b3;
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  overflow: auto;
+  max-height: 90%; /* Ensure modal doesn't exceed screen height */
+}
+
+.modal-image {
+  max-width: 500px;
+  max-height: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.episode-list {
+  list-style: none;
+  padding: 0;
+}
+
+.episode-list li {
+  margin-bottom: 20px;
+}
+
+.close {
+  color: #aaaaaa;
+  cursor: pointer;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.close:hover,
+.close:focus {
+  color: #000000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .cards-list {
+      padding: 10px; /* Adjust padding for smaller screens */
+  }
+
+  .card {
+      width: 100%; /* Full width for smaller screens */
+  }
 }
