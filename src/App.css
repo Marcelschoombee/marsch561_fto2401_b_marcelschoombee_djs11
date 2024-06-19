@@ -16,6 +16,8 @@ body {
 }
 
 .card {
+  width: 300px; 
+  height: 500px; 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -24,6 +26,10 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
 }
 
 .card:hover {
@@ -49,9 +55,14 @@ body {
 }
 
 .card-description {
-  font-size: 1em;
-  margin: 10px 0;
-  color: #777;
+  margin-bottom: 10px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* For multiline truncation with ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Number of lines to show before truncating */
+  -webkit-box-orient: vertical;
 }
 
 .card-genres {
@@ -89,9 +100,150 @@ body {
   background-color: #0056b3;
 }
 
+.card-seasons,
+.card-updated {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.card-read-more,
+.read-more {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.card-read-more:hover,
+.read-more:hover {
+    text-decoration: underline;
+    color: #0056b3; 
+}
+
 .loading, .error {
   text-align: center;
   padding: 20px;
   font-size: 1.2em;
   color: #333;
+}
+
+.footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px 0;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  font-family: 'Arial', sans-serif;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #ccc;
+}
+
+.footer p {
+  margin: 5px 0;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 600px;
+  max-height: 600px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  z-index: 1000;
+  overflow: auto;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-image {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.modal-title {
+  margin: 20px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.modal-description {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.modal-genres,
+.modal-seasons,
+.modal-episodes {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.modal-genres strong,
+.modal-seasons strong,
+.modal-episodes strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.modal-seasons button {
+  margin-right: 10px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-seasons button:hover {
+  background-color: #0056b3;
 }

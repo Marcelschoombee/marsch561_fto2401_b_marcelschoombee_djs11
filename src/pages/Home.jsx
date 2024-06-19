@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Card from '../components/Cards'; // Ensure this path is correct
+import Card from '../components/Cards';
 import { fetchPreview } from '../api'; // Ensure this path is correct
 import '../App.css';
 
@@ -34,7 +34,8 @@ function Home() {
 
     const filteredData = filterByGenre(data, selectedGenre);
 
-    filteredData.sort((a, b) => a.title.localeCompare(b.title)); // filteredData alphabetically by title
+    // Sort the filteredData alphabetically by title
+    filteredData.sort((a, b) => a.title.localeCompare(b.title));
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -51,6 +52,7 @@ function Home() {
                     url={item.url}
                     seasons={item.seasons}
                     updated={item.updated}
+                    shows={item.shows || []} // Pass shows data
                 />
             ))}
         </section>

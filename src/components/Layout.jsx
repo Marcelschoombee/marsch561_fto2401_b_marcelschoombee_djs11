@@ -6,13 +6,16 @@ import Home from '../pages/Home';
 
 const Layout = ({ children, onGenreSelect, genresData }) => {
     return (
+        <div>
         <main>
             <Header onGenreSelect={onGenreSelect} genresData={genresData} />
             <Home>
                 {children}
             </Home>
-            <Footer />
+            
         </main>
+        <Footer />
+        </div>
     );
 }
 
