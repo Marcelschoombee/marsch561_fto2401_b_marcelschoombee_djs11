@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchPreview, fetchShow } from '../api';
 import genresData from '../genresData';
@@ -11,7 +11,7 @@ function Home() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
+   
     
 
     // Modal state
@@ -52,17 +52,7 @@ function Home() {
 
     const filteredData = filterByGenre(data, selectedGenre);
 
-    // Sort the filteredData alphabetically by title
-    filteredData.sort((a, b) => {
-        const titleA = a.title.toUpperCase(); // ignore upper and lowercase
-        const titleB = b.title.toUpperCase(); // ignore upper and lowercase
-        if (sortOrder === 'asc') {
-            return titleA.localeCompare(titleB);
-        } else {
-            return titleB.localeCompare(titleA);
-        }
-    });
-
+  
     // Function to get genre title by ID
     const getGenreTitle = (genreId) => {
         const genre = genresData.find(genre => genre.id === genreId);
@@ -116,21 +106,17 @@ function Home() {
         return favorites.includes(`${selectedShow.id}-${currentSeasonIndex}-${episode.episode}`);
     };
 
-    // Function to handle sorting based on user selection
-    const handleSortOrder = (order) => {
-        setSortOrder(order);
-    };
+ 
+
+ 
+
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
         <section className="cards-list">
-            <div className="sort-options">
-                <button className={`btn ${sortOrder === 'asc' ? 'active' : ''}`} onClick={() => handleSortOrder('asc')}>A-Z</button>
-                <button className={`btn ${sortOrder === 'desc' ? 'active' : ''}`} onClick={() => handleSortOrder('desc')}>Z-A</button>
-            </div>
-            {filteredData.map(item => (
+            {sortedData.map(item => (
                 <div key={item.id} className="card">
                     <div className="card-image">
                         <img src={item.image} alt={item.title} />

@@ -8,13 +8,13 @@ import { Modal } from './Modal';
 const Layout = ({ children, onGenreSelect, genresData }) => {
     return (
         <div>
-        <main>
+                <main>
             <Header onGenreSelect={onGenreSelect} genresData={genresData} />
             <Home>
                 {children}
                 <Modal />
             </Home>
-        </main>
+                </main>
         <Footer />
         </div>
     );
