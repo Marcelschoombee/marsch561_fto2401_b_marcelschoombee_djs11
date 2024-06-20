@@ -1,21 +1,19 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import Header from './Header';
-import Footer from './Footer'
-import Home from '../pages/Home';
-import { Modal } from './Modal';
+import Footer from './Footer';
 
 
-const Layout = ({ children, onGenreSelect, genresData }) => {
+const Layout = ({onGenreSelect, genresData }) => {
     return (
         <div>
-                <main>
+            
+        <main>
             <Header onGenreSelect={onGenreSelect} genresData={genresData} />
-            <Home>
-                {children}
-                <Modal />
-            </Home>
+            <Outlet />
+            <Footer /> 
         </main>
-        <Footer />
+         
         </div>
     );
 }

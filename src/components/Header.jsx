@@ -3,13 +3,10 @@ import { Link } from 'react-router-dom';
 import genresData from '../genresData';
 import '../index.css';
 
-function Header({ toggleMenu }) {
+function Header() {
     return (
         <div className="header--div">
             <nav className="nav-bar">
-                <button className="hamburger-menu" onClick={toggleMenu}>
-                    &#9776;
-                </button>
                 <h2>Header</h2>
                 <div className="dropdown">
                     <button className="dropbtn">Genres</button>

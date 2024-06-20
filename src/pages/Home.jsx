@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchPreview, fetchShow } from '../api';
 import genresData from '../genresData';
@@ -12,7 +12,7 @@ function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
-    
+    const [sortBy, setSortBy] = useState('title'); // 'title', 'date'
 
     // Modal state
     const [selectedShow, setSelectedShow] = useState(null);
@@ -20,7 +20,7 @@ function Home() {
     const [currentSeasonIndex, setCurrentSeasonIndex] = useState(0); // State to track current season index
     const [currentEpisode, setCurrentEpisode] = useState(null); // State to track current episode
     const [favorites, setFavorites] = useState([]); // State to track favorite episodes
-    
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -52,15 +52,26 @@ function Home() {
 
     const filteredData = filterByGenre(data, selectedGenre);
 
-    // Sort the filteredData alphabetically by title
+    // Sort the filteredData
     filteredData.sort((a, b) => {
-        const titleA = a.title.toUpperCase(); // ignore upper and lowercase
-        const titleB = b.title.toUpperCase(); // ignore upper and lowercase
-        if (sortOrder === 'asc') {
-            return titleA.localeCompare(titleB);
-        } else {
-            return titleB.localeCompare(titleA);
+        if (sortBy === 'title') {
+            const titleA = a.title.toUpperCase(); // ignore upper and lowercase
+            const titleB = b.title.toUpperCase(); // ignore upper and lowercase
+            if (sortOrder === 'asc') {
+                return titleA.localeCompare(titleB);
+            } else {
+                return titleB.localeCompare(titleA);
+            }
+        } else if (sortBy === 'date') {
+            const dateA = new Date(a.updated);
+            const dateB = new Date(b.updated);
+            if (sortOrder === 'asc') {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
+            }
         }
+        return 0;
     });
 
     // Function to get genre title by ID
@@ -68,7 +79,6 @@ function Home() {
         const genre = genresData.find(genre => genre.id === genreId);
         return genre ? genre.title : 'Unknown Genre';
     };
-
 
     // Function to open modal and fetch show details
     const openModal = async (showId) => {
@@ -122,14 +132,20 @@ function Home() {
         setSortOrder(order);
     };
 
+    const handleSortBy = (sortBy) => {
+        setSortBy(sortBy);
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
         <section className="cards-list">
             <div className="sort-options">
-                <button className={`btn ${sortOrder === 'asc' ? 'active' : ''}`} onClick={() => handleSortOrder('asc')}>A-Z</button>
-                <button className={`btn ${sortOrder === 'desc' ? 'active' : ''}`} onClick={() => handleSortOrder('desc')}>Z-A</button>
+                <button className={`btn ${sortBy === 'title' && sortOrder === 'asc' ? 'active' : ''}`} onClick={() => { handleSortBy('title'); handleSortOrder('asc'); }}>A-Z</button>
+                <button className={`btn ${sortBy === 'title' && sortOrder === 'desc' ? 'active' : ''}`} onClick={() => { handleSortBy('title'); handleSortOrder('desc'); }}>Z-A</button>
+                <button className={`btn ${sortBy === 'date' && sortOrder === 'desc' ? 'active' : ''}`} onClick={() => { handleSortBy('date'); handleSortOrder('desc'); }}>Newest</button>
+                <button className={`btn ${sortBy === 'date' && sortOrder === 'asc' ? 'active' : ''}`} onClick={() => { handleSortBy('date'); handleSortOrder('asc'); }}>Oldest</button>
             </div>
             {filteredData.map(item => (
                 <div key={item.id} className="card">
@@ -146,27 +162,28 @@ function Home() {
                 </div>
             ))}
             {modalOpen && selectedShow && (
-    <div className="modal">
-        <div className="modal-content">
-            <span className="close" onClick={closeModal}>&times;</span> 
-            <img 
-                src={selectedShow.seasons[currentSeasonIndex].image} 
-                alt={selectedShow.title} 
-                className="modal-image" 
-            />
-            <h2>{selectedShow.title}</h2>
-            <p>{selectedShow.description}</p> 
-            <div className="season-nav">
-                {selectedShow.seasons.map((season, index) => (
-                    <button
-                        key={index}
-                        className={`season-button ${index === currentSeasonIndex ? 'active' : ''}`}
-                        onClick={() => setCurrentSeasonIndex(index)}
-                    >
-                        Season {season.season}
-                    </button>
-                ))}
-            </div>{currentEpisode && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={closeModal}>&times;</span>
+                        <img 
+                            src={selectedShow.seasons[currentSeasonIndex].image} 
+                            alt={selectedShow.title} 
+                            className="modal-image" 
+                        />
+                        <h2>{selectedShow.title}</h2>
+                        <p>{selectedShow.description}</p>
+                        <div className="season-nav">
+                            {selectedShow.seasons.map((season, index) => (
+                                <button
+                                    key={index}
+                                    className={`season-button ${index === currentSeasonIndex ? 'active' : ''}`}
+                                    onClick={() => setCurrentSeasonIndex(index)}
+                                >
+                                    Season {season.season}
+                                </button>
+                            ))}
+                        </div>
+                        {currentEpisode && (
                             <div className="audio-player">
                                 <h4>Now Playing: {currentEpisode.title}</h4>
                                 <audio controls src={currentEpisode.file}>
@@ -174,8 +191,8 @@ function Home() {
                                 </audio>
                             </div>
                         )}
-            <h3>{selectedShow.seasons[currentSeasonIndex].title}</h3>
-            <ul className="episode-list">
+                        <h3>{selectedShow.seasons[currentSeasonIndex].title}</h3>
+                        <ul className="episode-list">
                             {selectedShow.seasons[currentSeasonIndex].episodes.map(episode => (
                                 <li key={episode.episode} onClick={() => handleEpisodeClick(episode)}>
                                     <strong>{episode.title}</strong>
@@ -189,7 +206,6 @@ function Home() {
                                 </li>
                             ))}
                         </ul>
-                        
                         <div className="season-navigation">
                             {currentSeasonIndex > 0 && (
                                 <button onClick={prevSeason}>Previous Season</button>
