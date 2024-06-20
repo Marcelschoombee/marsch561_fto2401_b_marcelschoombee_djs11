@@ -14,7 +14,7 @@ const Layout = ({ children, onGenreSelect, genresData }) => {
                 {children}
                 <Modal />
             </Home>
-                </main>
+        </main>
         <Footer />
         </div>
     );
