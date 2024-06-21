@@ -30,6 +30,7 @@ function Home() {
     // Simple Modal state
     const [simpleModalOpen, setSimpleModalOpen] = useState(false);
     const [selectedEpisode, setSelectedEpisode] = useState(null); // State to track selected episode for simple modal
+    const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0); // State to track current episode index
     const [seasonImage, setSeasonImage] = useState(''); // State to track the season image
 
     useEffect(() => {
@@ -141,6 +142,19 @@ function Home() {
         setCurrentSeasonIndex(prevIndex => prevIndex - 1);
     };
 
+    // Function to handle skipping to next episode
+    const nextEpisode = () => {
+        if (selectedShow && currentEpisodeIndex < selectedShow.seasons[currentSeasonIndex].episodes.length - 1) {
+            setCurrentEpisodeIndex(prevIndex => prevIndex + 1);
+        }
+    };
+
+    // Function to handle skipping to previous episode
+    const prevEpisode = () => {
+        if (currentEpisodeIndex > 0) {
+            setCurrentEpisodeIndex(prevIndex => prevIndex - 1);
+        }
+    };
     // Handle episode click
     const handleEpisodeClick = (episode, seasonImage) => {
         setCurrentEpisode(episode);
@@ -221,35 +235,46 @@ function Home() {
     if (error) return <div>Error: {error}</div>;
 
     return (
+        <main>
         <section className="cards-list" onDragOver={handleDragOver} onDrop={handleDrop}>
             {/* Simple Modal */}
             {simpleModalOpen && selectedEpisode && (
-                <div className="simple-modal">
-                    <div
-                        className="simple-modal-content"
-                        draggable
-                        onDragStart={handleDragStart}
-                        ref={simpleModalRef}
-                    >
-                        <span className="close" onClick={closeSimpleModal}>&times;</span>
-                        <img 
-                            src={seasonImage} // Use the season image
-                            alt={selectedEpisode.title} 
-                            className="modal-image" 
-                        />
-                        <h2>{selectedEpisode.title}</h2>
-                        <div className="audio-player">
-                            <h4>Now Playing: {selectedEpisode.title}</h4>
-                            <audio controls src={selectedEpisode.file}
-                            onPlay={handleAudioPlay}
-                            onPause={handleAudioPause}
-                            >
-                                Your browser does not support the audio element.
-                            </audio>
-                        </div>
-                    </div>
-                </div>
-            )}
+    <div className="simple-modal">
+        <div
+            className="simple-modal-content"
+            draggable
+            onDragStart={handleDragStart}
+            ref={simpleModalRef}
+        >
+            <span className="close" onClick={closeSimpleModal}>&times;</span>
+            <img
+                src={seasonImage} // Use the season image
+                alt={selectedEpisode.title}
+                className="modal-image"
+            />
+            <h2>{selectedEpisode.title}</h2>
+            <div className="audio-player">
+                <h4>Now Playing: {selectedEpisode.title}</h4>
+                <audio
+                    controls
+                    src={selectedEpisode.file}
+                    onPlay={handleAudioPlay}
+                    onPause={handleAudioPause}
+                >
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+            <div className="modal-controls">
+                {currentEpisodeIndex > 0 && (
+                    <button className="btn" onClick={prevEpisode}>Previous</button>
+                )}
+                {selectedShow && currentEpisodeIndex < selectedShow.seasons[currentSeasonIndex].episodes.length - 1 && (
+                    <button className="btn" onClick={nextEpisode}>Next</button>
+                )}
+            </div>
+        </div>
+    </div>
+)}
             <div className="sort-options">
                 <button className={`btn ${sortBy === 'title' && sortOrder === 'asc' ? 'active' : ''}`} onClick={() => { handleSortBy('title'); handleSortOrder('asc'); }}>A-Z</button>
                 <button className={`btn ${sortBy === 'title' && sortOrder === 'desc' ? 'active' : ''}`} onClick={() => { handleSortBy('title'); handleSortOrder('desc'); }}>Z-A</button>
@@ -334,6 +359,7 @@ function Home() {
                 </div>
             )}
         </section>
+        </main>
     );
 }
 

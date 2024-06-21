@@ -23,7 +23,8 @@ function Header() {
         <div className="header">
             <nav className="navbar">
                 <Link to="/" className="navbar-brand">
-                    <h2>MyApp</h2>
+                <img src="../images/PodPlayer.png" alt="PodPlayer Logo" className='pod-image' />
+                    <h2>PodPlayer</h2>
                 </Link>
                 <div className="navbar-menu">
                     <div className="dropdown">
@@ -37,7 +38,7 @@ function Header() {
                             ))}
                         </div>
                     </div>
-                    <Link to="/favorites" className="nav-link">Favorites</Link>
+                    <Link to="/favorites" className="favoritesbtn">Favorites</Link>
                     <form className="search-form" onSubmit={handleSearchSubmit}>
                         <input
                             type="text"
@@ -46,7 +47,9 @@ function Header() {
                             className="search-input"
                             placeholder="Search shows..."
                         />
-                        <button type="submit" className="dropbtn">Search</button>
+                        <button type="submit" className="dropbtn">
+                            Search
+                        </button>
                     </form>
                 </div>
             </nav>

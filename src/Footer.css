@@ -1,0 +1,34 @@
+.footer {
+    background-color: #333333;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-content p {
+    margin: 0;
+}
+
+.social-icon {
+    height: 30px; /* Adjust size as needed */
+    width: auto;
+    margin-left: 10px; /* Adjust margin as needed */
+}
+
+@media (max-width: 768px) {
+    .footer {
+        width: 768px; 
+    }
+}
+
+@media (max-width: 786px) {
+    .footer {
+        width: 750px; 
+    }
+}
