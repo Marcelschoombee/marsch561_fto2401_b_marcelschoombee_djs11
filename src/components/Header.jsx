@@ -1,9 +1,24 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import genresData from '../genresData';
 import '../Header.css'; 
 
 function Header() {
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate(); // Use useNavigate to get the navigation function
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/?search=${searchQuery}`); // Use navigate instead of history.push
+        }
+    };
+
     return (
         <div className="header">
             <nav className="navbar">
@@ -23,6 +38,16 @@ function Header() {
                         </div>
                     </div>
                     <Link to="/favorites" className="nav-link">Favorites</Link>
+                    <form className="search-form" onSubmit={handleSearchSubmit}>
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            className="search-input"
+                            placeholder="Search shows..."
+                        />
+                        <button type="submit" className="dropbtn">Search</button>
+                    </form>
                 </div>
             </nav>
         </div>

@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { fetchPreview, fetchShow } from '../api';
 import genresData from '../genresData';
 import '../Home.css'
 
 function Home() {
     const { id } = useParams();
+    const location = useLocation();
+
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get('search');
     const selectedGenre = id ? parseInt(id) : null;
 
     const [data, setData] = useState([]);
@@ -14,7 +18,7 @@ function Home() {
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
     const [sortBy, setSortBy] = useState('title'); // 'title', 'date'
     const [audioPlaying, setAudioPlaying] = useState(false);
-
+    
     // Detailed Modal state
     const [selectedShow, setSelectedShow] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -48,6 +52,7 @@ function Home() {
         setFavorites(savedFavorites);
     }, []);
 
+   
     useEffect(() => {
         localStorage.setItem('favorites', JSON.stringify(favorites));
     }, [favorites]);
@@ -57,7 +62,13 @@ function Home() {
         return items.filter(item => item.genres.includes(genreId));
     };
 
-    const filteredData = filterByGenre(data, selectedGenre);
+    const filterBySearch = (items, query) => {
+        if (!query) return items;
+        return items.filter(item => item.title.toLowerCase().includes(query.toLowerCase()));
+    };
+
+    let filteredData = filterByGenre(data, selectedGenre);
+    filteredData = filterBySearch(filteredData, searchQuery);
 
     // Sort the filteredData
     filteredData.sort((a, b) => {
