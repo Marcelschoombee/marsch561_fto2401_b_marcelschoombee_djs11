@@ -4,6 +4,8 @@ import Header from './Header';
 import Footer from './Footer';
 
 
+
+
 const Layout = ({onGenreSelect, genresData }) => {
     return (
         <div>

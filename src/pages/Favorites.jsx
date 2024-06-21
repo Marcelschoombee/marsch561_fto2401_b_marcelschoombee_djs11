@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchShow } from '../api';
-import '../App.css';
+import '../Favorites.css'; // Import custom styles for Favorites component
 
 function Favorites() {
     const [favorites, setFavorites] = useState([]);
@@ -125,7 +125,7 @@ function Favorites() {
                                 <audio controls src={show.episode.file}>
                                     Your browser does not support the audio element.
                                 </audio>
-                                <button className="btn" onClick={() => removeFavorite(`${show.id}-${show.seasonIndex}-${show.episodeIndex}`)}>Remove from Favorites</button>
+                                <button className="btn remove-btn" onClick={() => removeFavorite(`${show.id}-${show.seasonIndex}-${show.episodeIndex}`)}>Remove from Favorites</button>
                             </div>
                         </div>
                     ))

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchPreview, fetchShow } from '../api';
 import genresData from '../genresData';
-import '../App.css';
+import '../Home.css'
 
 function Home() {
     const { id } = useParams();
@@ -13,13 +13,20 @@ function Home() {
     const [error, setError] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
     const [sortBy, setSortBy] = useState('title'); // 'title', 'date'
+    const [audioPlaying, setAudioPlaying] = useState(false);
 
-    // Modal state
+    // Detailed Modal state
     const [selectedShow, setSelectedShow] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [currentSeasonIndex, setCurrentSeasonIndex] = useState(0); // State to track current season index
     const [currentEpisode, setCurrentEpisode] = useState(null); // State to track current episode
     const [favorites, setFavorites] = useState([]); // State to track favorite episodes
+    const simpleModalRef = useRef(null);
+
+    // Simple Modal state
+    const [simpleModalOpen, setSimpleModalOpen] = useState(false);
+    const [selectedEpisode, setSelectedEpisode] = useState(null); // State to track selected episode for simple modal
+    const [seasonImage, setSeasonImage] = useState(''); // State to track the season image
 
     useEffect(() => {
         const fetchData = async () => {
@@ -80,7 +87,7 @@ function Home() {
         return genre ? genre.title : 'Unknown Genre';
     };
 
-    // Function to open modal and fetch show details
+    // Function to open detailed modal and fetch show details
     const openModal = async (showId) => {
         try {
             const showDetails = await fetchShow(showId);
@@ -92,10 +99,25 @@ function Home() {
         }
     };
 
-    // Close modal
+    // Function to close detailed modal
     const closeModal = () => {
         setSelectedShow(null);
         setModalOpen(false);
+    };
+
+    // Function to open simple modal with episode details
+    const openSimpleModal = (episode, seasonImage) => {
+        setSelectedEpisode(episode);
+        setSeasonImage(seasonImage);
+        console.log('Opening Simple Modal with episode:', episode);
+        setSimpleModalOpen(true);
+    };
+
+    // Function to close simple modal
+    const closeSimpleModal = () => {
+        setSelectedEpisode(null);
+        setSeasonImage(''); // Reset season image
+        setSimpleModalOpen(false);
     };
 
     // Handle next season click
@@ -109,8 +131,9 @@ function Home() {
     };
 
     // Handle episode click
-    const handleEpisodeClick = (episode) => {
+    const handleEpisodeClick = (episode, seasonImage) => {
         setCurrentEpisode(episode);
+        openSimpleModal(episode, seasonImage); // Open simple modal on episode click
     };
 
     // Handle favorite click
@@ -136,23 +159,100 @@ function Home() {
         setSortBy(sortBy);
     };
 
+    // Function to handle audio play
+    const handleAudioPlay = () => {
+        setAudioPlaying(true);
+    };
+
+    // Function to handle audio pause or end
+    const handleAudioPause = () => {
+        setAudioPlaying(false);
+    };
+
+    // Function to reset all progress
+    const resetAllProgress = () => {
+        setFavorites([]); // Clear favorites
+        // You can add more state resets or localStorage clears if needed
+        localStorage.removeItem('favorites'); // Remove favorites from localStorage
+        alert('All progress has been reset.'); // Notify user
+    };
+
+    // Event listener for beforeunload
+    window.onbeforeunload = (event) => {
+        if (audioPlaying) {
+            const message = 'Audio is currently playing. Are you sure you want to leave?';
+            event.returnValue = message; // Standard for most browsers
+            return message; // Required for Chrome
+        }
+    };
+
+    const handleDragStart = (e) => {
+        const rect = simpleModalRef.current.getBoundingClientRect();
+        e.dataTransfer.setData('application/json', JSON.stringify({
+            offsetX: e.clientX - rect.left,
+            offsetY: e.clientY - rect.top
+        }));
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        const data = JSON.parse(e.dataTransfer.getData('application/json'));
+        const modal = simpleModalRef.current;
+        modal.style.left = `${e.clientX - data.offsetX}px`;
+        modal.style.top = `${e.clientY - data.offsetY}px`;
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <section className="cards-list">
+        <section className="cards-list" onDragOver={handleDragOver} onDrop={handleDrop}>
+            {/* Simple Modal */}
+            {simpleModalOpen && selectedEpisode && (
+                <div className="simple-modal">
+                    <div
+                        className="simple-modal-content"
+                        draggable
+                        onDragStart={handleDragStart}
+                        ref={simpleModalRef}
+                    >
+                        <span className="close" onClick={closeSimpleModal}>&times;</span>
+                        <img 
+                            src={seasonImage} // Use the season image
+                            alt={selectedEpisode.title} 
+                            className="modal-image" 
+                        />
+                        <h2>{selectedEpisode.title}</h2>
+                        <div className="audio-player">
+                            <h4>Now Playing: {selectedEpisode.title}</h4>
+                            <audio controls src={selectedEpisode.file}
+                            onPlay={handleAudioPlay}
+                            onPause={handleAudioPause}
+                            >
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="sort-options">
                 <button className={`btn ${sortBy === 'title' && sortOrder === 'asc' ? 'active' : ''}`} onClick={() => { handleSortBy('title'); handleSortOrder('asc'); }}>A-Z</button>
                 <button className={`btn ${sortBy === 'title' && sortOrder === 'desc' ? 'active' : ''}`} onClick={() => { handleSortBy('title'); handleSortOrder('desc'); }}>Z-A</button>
                 <button className={`btn ${sortBy === 'date' && sortOrder === 'desc' ? 'active' : ''}`} onClick={() => { handleSortBy('date'); handleSortOrder('desc'); }}>Newest</button>
                 <button className={`btn ${sortBy === 'date' && sortOrder === 'asc' ? 'active' : ''}`} onClick={() => { handleSortBy('date'); handleSortOrder('asc'); }}>Oldest</button>
+                <button className="btn reset-btn" onClick={resetAllProgress}>Reset All Progress</button>
             </div>
+            <div className="card-container">
             {filteredData.map(item => (
                 <div key={item.id} className="card">
                     <div className="card-image">
                         <img src={item.image} alt={item.title} />
                     </div>
-                    <div className="card-content">
+                    <div className="card-properties">
                         <h2>{item.title}</h2>    
                         <p><strong>Genre:</strong> {getGenreTitle(item.genres[0])}</p>
                         <p><strong>Seasons:</strong> {item.seasons}</p>
@@ -161,6 +261,8 @@ function Home() {
                     </div>
                 </div>
             ))}
+            </div>
+            {/* Detailed Modal */}
             {modalOpen && selectedShow && (
                 <div className="modal">
                     <div className="modal-content">
@@ -183,10 +285,13 @@ function Home() {
                                 </button>
                             ))}
                         </div>
-                        {currentEpisode && (
+                        {currentEpisode &&  (
                             <div className="audio-player">
                                 <h4>Now Playing: {currentEpisode.title}</h4>
-                                <audio controls src={currentEpisode.file}>
+                                <audio controls src={currentEpisode.file}
+                                onPlay={handleAudioPlay}
+                                onPause={handleAudioPause}
+                                >
                                     Your browser does not support the audio element.
                                 </audio>
                             </div>
@@ -194,7 +299,7 @@ function Home() {
                         <h3>{selectedShow.seasons[currentSeasonIndex].title}</h3>
                         <ul className="episode-list">
                             {selectedShow.seasons[currentSeasonIndex].episodes.map(episode => (
-                                <li key={episode.episode} onClick={() => handleEpisodeClick(episode)}>
+                                <li key={episode.episode} onClick={() => handleEpisodeClick(episode, selectedShow.seasons[currentSeasonIndex].image)}>
                                     <strong>{episode.title}</strong>
                                     <p>{episode.description}</p>
                                     <button 
