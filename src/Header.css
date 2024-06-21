@@ -1,6 +1,6 @@
 .header {
-    background-color: #2c3e50;
-    color: #ffffff;
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Light text color */
     padding: 10px 0;
 }
 
@@ -8,16 +8,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
     padding: 0 20px;
 }
 
 .navbar-brand {
+    display: flex;
+    align-items: center;
     text-decoration: none;
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: bold;
+    color: #fff;
+}
+
+.pod-image {
+    width: 40px; /* Adjust size as needed */
+    height: auto;
+    margin-right: 10px;
 }
 
 .navbar-menu {
@@ -27,29 +31,29 @@
 
 .dropdown {
     position: relative;
-    display: inline-block;
+    margin-right: 20px; /* Adjust spacing */
 }
 
 .dropbtn {
     background-color: transparent;
-    color: #ffffff;
+    color: #fff;
     border: none;
     cursor: pointer;
-    padding: 10px 15px;
     font-size: 16px;
+    padding: 10px;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #34495e;
+    background-color: #f9f9f9;
     min-width: 160px;
-    z-index: 1;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
 }
 
 .dropdown-content a {
-    color: #999999;
+    color: #333;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -59,13 +63,51 @@
     display: block;
 }
 
-.nav-link {
-    color: #ffffff;
-    text-decoration: none;
-    padding: 10px 15px;
-    font-size: 16px;
+.genre-item {
+    transition: background-color 0.3s ease;
 }
 
-.nav-link:hover {
-    text-decoration: underline;
+.genre-item:hover {
+    background-color: #ddd; /* Light background color on hover */
+}
+
+.favoritesbtn {
+    text-decoration: none;
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px;
+    margin-right: 20px; /* Adjust spacing */
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px; /* Adjust spacing */
+}
+
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .dropdown {
+        margin-right: 0;
+        margin-bottom: 10px; /* Adjust spacing */
+    }
+
+    .favoritesbtn {
+        margin-right: 0;
+        margin-bottom: 10px; /* Adjust spacing */
+    }
 }
