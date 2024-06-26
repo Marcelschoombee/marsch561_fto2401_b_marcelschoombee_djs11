@@ -8,10 +8,12 @@ function Home() {
     const { id } = useParams();
     const location = useLocation();
 
+    // Search state
     const searchParams = new URLSearchParams(location.search);
     const searchQuery = searchParams.get('search');
     const selectedGenre = id ? parseInt(id) : null;
 
+    //Sorting State
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -48,6 +50,7 @@ function Home() {
         fetchData();
     }, []);
 
+    // useEffect is a hook in React that allows you to perform side effects in your functional components
     useEffect(() => {
         const savedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
         setFavorites(savedFavorites);
@@ -223,6 +226,7 @@ function Home() {
         e.preventDefault();
     };
 
+    //Function to handle drop for simple modal
     const handleDrop = (e) => {
         e.preventDefault();
         const data = JSON.parse(e.dataTransfer.getData('application/json'));
